@@ -3,7 +3,6 @@ from jwgl_student import *
 
 os.system("color 70")
 os.system("title 教务管理系统v3.0")
-os.system('MODE con: COLS=62')
 
 '''
 显示菜单
