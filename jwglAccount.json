@@ -1,0 +1,12 @@
+{
+  "serverAddress": [
+    {
+      "address": "http://202.197.120.56"
+    },
+    {
+      "address": "http://202.197.120.57"
+    }
+  ],
+  "stduentPwd": "aaaaaa",
+  "studentNumber": "201430185038"
+}
