@@ -2,7 +2,9 @@
 教务管理系统
 ===================================  
 由python3.5开发，仅在windows7 x64环境下测试过<br>
-依赖：BeautifulSoup from bs4
+依赖：<br>
+BeautifulSoup from bs4<br>
+lxml页面解析器
 
 3.0特性
 -----------------------------------
