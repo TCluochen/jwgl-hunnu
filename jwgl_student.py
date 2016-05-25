@@ -6,7 +6,7 @@ from urllib import request, parse, error
 教务管理系统类
 '''
 class jwgl_student():
-	def __init__(self, studentNumber, studentPwd, serverAddress = 'http://jwgl.hunnu.edu.cn'):
+	def __init__(self, studentNumber, studentPwd, serverAddress='http://jwgl.hunnu.edu.cn'):
 		#加锁，当“刷新seesionID进程”访问本类时，获取信息等方法必须等待
 		self.lock = threading.Lock()
 		self.refreshSessionID_thread = refreshSessionID(self)
@@ -41,7 +41,7 @@ class jwgl_student():
 			sessionID = jumpUrl[jumpUrl.find('(') + 1:jumpUrl.find(')')]
 			startPage = BeautifulSoup(startPageResp.read(), 'lxml')
 			#获取页面状态码
-			self.logIn__VIEWSTATE = startPage.find(attrs = {'name': '__VIEWSTATE'}).get('value')
+			self.logIn__VIEWSTATE = startPage.find(attrs={'name': '__VIEWSTATE'}).get('value')
 			logInUrl = '%s/(%s)/default2.aspx' % (self.serverAddress, sessionID)
 		else:
 			#判断是否重复登陆
@@ -61,13 +61,13 @@ class jwgl_student():
 				'TextBox1': self.studentNumber,
 				'TextBox2': self.studentPwd,
 				'TextBox3': '',
-				'RadioButtonList1': parse.quote('学生', encoding = 'gbk'),
+				'RadioButtonList1': parse.quote('学生', encoding='gbk'),
 				'Button1': '',
 				'lbLanguage': ''}
 		decoded_data = parse.urlencode(data).replace('%25', '%').encode('gbk')
 
 		#登陆
-		req = request.Request(logInUrl, headers = logInHeaders, data = decoded_data)
+		req = request.Request(logInUrl, headers=logInHeaders, data=decoded_data)
 		#错误处理
 		try:
 			resp = request.urlopen(req)
@@ -82,12 +82,12 @@ class jwgl_student():
 			#登陆成功，设置会话id
 			self.sessionID = sessionID
 			#获取姓名
-			self.name = logInPage.find('span', id = 'xhxm').text
+			self.name = logInPage.find('span', id='xhxm').text
 			self.name = re.sub(r'\W', '', self.name)
 			self.name = re.sub(r'\d', '', self.name).replace('同学', '')
 
 			#获取所有二级界面链接
-			self.subUrlList = logInPage.find_all('a', target = 'zhuti')
+			self.subUrlList = logInPage.find_all('a', target='zhuti')
 
 			#设置当前学年/学期
 			self.__setYearTerm()
@@ -102,7 +102,7 @@ class jwgl_student():
 			return False
 	
 	#登出
-	def logOut(self, stopRefreshRessionID = True):
+	def logOut(self, stopRefreshRessionID=True):
 		#判断是否已经登出
 		if not self.isOnline():
 			if stopRefreshRessionID:
@@ -117,7 +117,7 @@ class jwgl_student():
 		#解析主界面获取__VIEWSTATE
 		mainPageResp = request.urlopen(logOutUrl)
 		mainPage = BeautifulSoup(mainPageResp.read(), 'lxml')
-		logOut__VIEWSTATE = mainPage.find(attrs = {'name': '__VIEWSTATE'}).get('value')
+		logOut__VIEWSTATE = mainPage.find(attrs={'name': '__VIEWSTATE'}).get('value')
 
 		#post头
 		logOutHeaders = dict(self.baseHeaders)
@@ -130,7 +130,7 @@ class jwgl_student():
 		decoded_data = parse.urlencode(data).replace('%25', '%').encode('gbk')
 
 		#注销
-		req = request.Request(logOutUrl, headers = logOutHeaders, data = decoded_data)
+		req = request.Request(logOutUrl, headers=logOutHeaders, data=decoded_data)
 		resp = request.urlopen(req)
 
 		#判断是否注销成功
@@ -164,7 +164,7 @@ class jwgl_student():
 			return
 		scoreUrl = '%s/(%s)/%s' % (self.serverAddress, self.sessionID, scoreUrl)
 		#将姓名编码至gbk
-		decoded_name = parse.quote(self.name, encoding = 'gbk')
+		decoded_name = parse.quote(self.name, encoding='gbk')
 		#替换中文
 		scoreUrl = scoreUrl.replace(self.name, decoded_name)
 
@@ -172,14 +172,14 @@ class jwgl_student():
 		scoreHeaders = dict(self.baseHeaders)
 		scoreHeaders['Referer'] = scoreUrl
 
-		req = request.Request(scoreUrl, headers = scoreHeaders)
+		req = request.Request(scoreUrl, headers=scoreHeaders)
 		#解析页面获取信息
 		soup = BeautifulSoup(request.urlopen(req).read(), 'lxml')
-		self.score__VIEWSTATE = soup.find(attrs = {'name': '__VIEWSTATE'}).get('value')
-		self.currentYear, self.currentTerm = [x.text for x in soup.find_all(selected = 'selected')]
+		self.score__VIEWSTATE = soup.find(attrs={'name': '__VIEWSTATE'}).get('value')
+		self.currentYear, self.currentTerm = [x.text for x in soup.find_all(selected='selected')]
 		self.yearList = []
 		#获取学年下拉列表中的选项
-		currentYear = soup.find(selected = 'selected')
+		currentYear = soup.find(selected='selected')
 		for i in range(4):
 			currentYear = currentYear.previous_sibling.previous_sibling
 			self.yearList.append(currentYear.text)
@@ -200,7 +200,7 @@ class jwgl_student():
 
 	#从页面中获取所有成绩表格中的值
 	def __getTableFromPage(self, soup):
-		tables = soup.find_all(class_ = 'datelist')
+		tables = soup.find_all(class_='datelist')
 		allScore = []
 		for eachTable in tables:
 			#获取每个表格的内容
@@ -224,7 +224,7 @@ class jwgl_student():
 			return []
 		scoreUrl = '%s/(%s)/%s' % (self.serverAddress, self.sessionID, scoreUrl)
 		#将姓名编码至gbk
-		decoded_name = parse.quote(self.name, encoding = 'gbk')
+		decoded_name = parse.quote(self.name, encoding='gbk')
 		#替换中文
 		scoreUrl = scoreUrl.replace(self.name, decoded_name)
 
@@ -237,11 +237,11 @@ class jwgl_student():
 				'ddlXN': year,
 				'ddlXQ': term}
 		if condition == '所有':
-			data['Button2'] = parse.quote('在校学习成绩查询', encoding = 'gbk')
+			data['Button2'] = parse.quote('在校学习成绩查询', encoding='gbk')
 		elif condition == '学年':
-			data['Button5'] = parse.quote('按学年查询', encoding = 'gbk')
+			data['Button5'] = parse.quote('按学年查询', encoding='gbk')
 		elif condition == '学期':
-			data['Button1'] = parse.quote('按学期查询', encoding = 'gbk')
+			data['Button1'] = parse.quote('按学期查询', encoding='gbk')
 		else:
 			print ('查询条件有错！')
 			os.system('pause')
@@ -249,7 +249,7 @@ class jwgl_student():
 		decoded_data = parse.urlencode(data).replace('%25', '%').encode('gbk')
 
 		#发送post
-		req = request.Request(scoreUrl, headers = scoreHeaders, data = decoded_data)
+		req = request.Request(scoreUrl, headers=scoreHeaders, data=decoded_data)
 		#解析页面获取成绩
 		soup = BeautifulSoup(request.urlopen(req).read(), 'lxml')		
 		return self.__getTableFromPage(soup)
@@ -263,7 +263,7 @@ class jwgl_student():
 			return []
 		gradeExamScoreUrl = '%s/(%s)/%s' % (self.serverAddress, self.sessionID, gradeExamScoreUrl)
 		#将姓名编码至gbk
-		decoded_name = parse.quote(self.name, encoding = 'gbk')
+		decoded_name = parse.quote(self.name, encoding='gbk')
 		#替换中文
 		gradeExamScoreUrl = gradeExamScoreUrl.replace(self.name, decoded_name)
 
@@ -272,7 +272,7 @@ class jwgl_student():
 		gradeExamScoreHeaders['Referer'] = gradeExamScoreUrl
 
 		#发送post
-		req = request.Request(gradeExamScoreUrl, headers = gradeExamScoreHeaders)
+		req = request.Request(gradeExamScoreUrl, headers=gradeExamScoreHeaders)
 		#解析页面获取等级考试成绩
 		soup = BeautifulSoup(request.urlopen(req).read(), 'lxml')
 		return self.__getTableFromPage(soup)
@@ -298,7 +298,7 @@ class refreshSessionID(threading.Thread):
 				break
 			#刷新数据中，数据加锁
 			self.jwglAccount.lock.acquire()
-			self.jwglAccount.logOut(stopRefreshRessionID = False)
+			self.jwglAccount.logOut(stopRefreshRessionID=False)
 			self.jwglAccount.logIn()
 			#刷新完成，数据解锁
 			self.jwglAccount.lock.release()

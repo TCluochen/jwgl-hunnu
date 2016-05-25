@@ -7,16 +7,16 @@ os.system("title 教务管理系统v3.0")
 '''
 显示菜单
 '''
-def menu(title, menuList, order = 0):
+def menu(title, menuList, order=0):
 	selected = order
 	while True:
 		print (title)
 		print ('上下键选择，回车键确定，ESC键退出\n')
 		for i in range(len(menuList)):
 			if i == selected:
-				print ('>>', end = '')
+				print ('>>', end='')
 			else:
-				print ('  ', end = '')
+				print ('  ', end='')
 			print (menuList[i])
 		while True:
 			ch = msvcrt.getch()
@@ -97,7 +97,7 @@ def printScore(tables):
 				for ch in eachLine[columnIndex]:
 					if ch <= chr(255):
 						space += 1
-				print (eachLine[columnIndex], end = ' ' * space)
+				print (eachLine[columnIndex], end=' ' * space)
 			print ()
 		print ()
 	print ()
@@ -126,7 +126,7 @@ if not jwgl.logIn():
 	exit()
 else:
 	with open('jwglAccount.json', 'w') as f:
-		json.dump(account, f, indent = 2)
+		json.dump(account, f, indent=2)
 
 try:
 	(currentYear, currentTerm, yearList) = jwgl.getYearTerm()
