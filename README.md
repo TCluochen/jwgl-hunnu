@@ -9,7 +9,7 @@ lxml页面解析器
 3.0特性
 -----------------------------------
 ![主菜单](http://i4.buimg.com/3c08683ab83f5e71.jpg)
-![查询成绩页面](http://i4.buimg.com/3c08683ab83f5e71.jpg)
+![查询成绩页面](http://i4.buimg.com/198a54bdcce3ea39.jpg)
 包含3个文件：<br>
 * jwgl_student.py<br>
 * 教务管理系统3.0.py<br>
